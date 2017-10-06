@@ -54,7 +54,7 @@ template<typename T, typename E> struct Result;
 
 namespace details {
 
-template<typename ...> struct void_t { typedef void type; };
+template<typename ...> struct void_t { using type = void; };
 
 namespace impl {
 	template<typename Func> struct result_of;
@@ -64,7 +64,7 @@ namespace impl {
 
 	template<typename Ret, typename... Args>
 	struct result_of<Ret (Args...)> {
-		typedef Ret type;
+		using type = Ret;
 	};
 }
 
@@ -73,28 +73,28 @@ struct result_of : public impl::result_of<decltype(&Func::operator())> { };
 
 template<typename Ret, typename Cls, typename... Args>
 struct result_of<Ret (Cls::*) (Args...) const> {
-	typedef Ret type;
+	using type = Ret;
 };
 
 template<typename Ret, typename... Args>
 struct result_of<Ret (*)(Args...)> {
-	typedef Ret type;
+	using type = Ret;
 };
 
 template<typename R>
-struct ResultOkType { typedef typename std::decay<R>::type type; };
+struct ResultOkType { using type = typename std::decay<R>::type; };
 
 template<typename T, typename E>
 struct ResultOkType<Result<T, E>> {
-	typedef T type;
+	using type = T;
 };
 
 template<typename R>
-struct ResultErrType { typedef R type; };
+struct ResultErrType { using type = R; };
 
 template<typename T, typename E>
 struct ResultErrType<Result<T, E>> {
-	typedef typename std::remove_reference<E>::type type;
+	using type = typename std::remove_reference<E>::type;
 };
 
 template<typename R> struct IsResult : public std::false_type { };
@@ -545,7 +545,7 @@ struct Storage {
 	static constexpr size_t Size = sizeof(T) > sizeof(E) ? sizeof(T) : sizeof(E);
 	static constexpr size_t Align = sizeof(T) > sizeof(E) ? alignof(T) : alignof(E);
 
-	typedef typename std::aligned_storage<Size, Align>::type type;
+	using type = typename std::aligned_storage<Size, Align>::type;
 
 	Storage()
 		: initialized_(false)
@@ -564,7 +564,7 @@ struct Storage {
 
 	template<typename U>
 	void rawConstruct(U&& val) {
-		typedef typename std::decay<U>::type CleanU;
+		using CleanU = typename std::decay<U>::type;
 
 		new (&storage_) CleanU(std::forward<U>(val));
 		initialized_ = true;
@@ -600,7 +600,7 @@ struct Storage {
 
 template<typename E>
 struct Storage<void, E> {
-	typedef typename std::aligned_storage<sizeof(E), alignof(E)>::type type;
+	using type = typename std::aligned_storage<sizeof(E), alignof(E)>::type;
 
 	void construct(types::Ok<void>)
 	{
@@ -615,7 +615,7 @@ struct Storage<void, E> {
 
 	template<typename U>
 	void rawConstruct(U&& val) {
-		typedef typename std::decay<U>::type CleanU;
+		using CleanU = typename std::decay<U>::type;
 
 		new (&storage_) CleanU(std::forward<U>(val));
 		initialized_ = true;
@@ -706,7 +706,7 @@ struct Result {
 
 	static_assert(!std::is_same<E, void>::value, "void error type is not allowed");
 
-	typedef details::Storage<T, E> storage_type;
+	using storage_type = details::Storage<T, E>;
 
 	Result(types::Ok<T> ok)
 		: ok_(true)
@@ -899,9 +899,9 @@ bool operator==(const Result<T, E>& lhs, types::Err<E> err) {
 	({                                                             \
 		auto res = __VA_ARGS__;                                    \
 		if (!res.isOk()) {                                         \
-			typedef details::ResultErrType<decltype(res)>::type E; \
+			using E = details::ResultErrType<decltype(res)>::type; \
 			return types::Err<E>(res.storage().get<E>());          \
 		}                                                          \
-		typedef details::ResultOkType<decltype(res)>::type T;      \
+		using T = details::ResultOkType<decltype(res)>::type;      \
 		res.storage().get<T>();                                    \
 	})
