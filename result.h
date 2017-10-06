@@ -707,6 +707,8 @@ struct Result {
 	static_assert(!std::is_same<E, void>::value, "void error type is not allowed");
 
 	using storage_type = details::Storage<T, E>;
+	using ok_type = T;
+	using err_type = E;
 
 	Result(types::Ok<T> ok)
 		: ok_(true)
