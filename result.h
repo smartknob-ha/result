@@ -822,14 +822,17 @@ struct Result {
 	template<typename U = T>
 	typename std::enable_if<
 		!std::is_same<U, void>::value,
-		U
+		U&&
 	>::type
-	unwrapOr(const U& defaultValue) const {
+	unwrap() {
 		if (isOk()) {
-			return storage().template get<U>();
+			return std::move(storage().template get<U>());
 		}
-		return defaultValue;
+
+		std::fprintf(stderr, "Attempting to unwrap an error Result\n");
+		std::terminate();
 	}
+
 
 	template<typename U = T>
 	typename std::enable_if<
@@ -838,16 +841,49 @@ struct Result {
 	>::type
 	unwrap() const {
 		if (isOk()) {
-			return storage().template get<U>();
+			return std::move(storage().template get<U>());
 		}
 
 		std::fprintf(stderr, "Attempting to unwrap an error Result\n");
 		std::terminate();
 	}
 
-	E unwrapErr() const {
+	template<typename U = T>
+	typename std::enable_if<
+		!std::is_same<U, void>::value,
+		U
+	>::type
+	unwrapOr(const U&& defaultValue) const {
+		if (isOk()) {
+			return unwrap();
+		}
+		return defaultValue;
+	}
+
+	template<typename U = T>
+	typename std::enable_if<
+		!std::is_same<U, void>::value,
+		U&&
+	>::type
+	unwrapOr(const U&& defaultValue) {
+		if (isOk()) {
+			return unwrap();
+		}
+		return defaultValue;
+	}
+
+	E&& unwrapErr() const {
 		if (isErr()) {
-			return storage().template get<E>();
+			return std::move(storage().template get<E>());
+		}
+
+		std::fprintf(stderr, "Attempting to unwrapErr an ok Result\n");
+		std::terminate();
+	}
+
+	E unwrapErr() {
+		if (isErr()) {
+			return std::move(storage().template get<E>());
 		}
 
 		std::fprintf(stderr, "Attempting to unwrapErr an ok Result\n");
