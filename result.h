@@ -710,13 +710,13 @@ struct Result {
 	using ok_type = T;
 	using err_type = E;
 
-	Result(types::Ok<T> ok)
+	Result(types::Ok<T>&& ok)
 		: ok_(true)
 	{
 		storage_.construct(std::move(ok));
 	}
 
-	Result(types::Err<E> err)
+	Result(types::Err<E>&& err)
 		: ok_(false)
 	{
 		storage_.construct(std::move(err));
