@@ -1,0 +1,32 @@
+{
+    "name": "Result",
+    "version": "1.0.0",
+    "description": "A Rust-like implementation for optional error handling",
+    "keywords": "result, error, template, c++, optional",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/smartknob-ha/result.git"
+    },
+    "authors":
+    [
+      {
+        "name": "Oktal",
+        "url": "https://github.com/oktal"
+      },
+      {
+        "name": "Xentec",
+        "url": "https://github.com/xentec"
+      },
+      {
+        "name": "SquaredPotato",
+        "url": "https://github.com/SquaredPotato",
+        "email": "cuerda_maijan@simplelogin.com",
+        "maintainer": true
+      }
+    ],
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/smartknob-ha/result",
+    "frameworks": "*",
+    "platforms": "*"
+  }
