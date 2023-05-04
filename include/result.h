@@ -684,7 +684,7 @@ struct Constructor<void, E> {
 
 } // namespace details
 
-namespace concept {
+namespace concepts {
 
 template<typename T, typename = void> struct EqualityComparable : std::false_type { };
 
@@ -699,7 +699,7 @@ typename std::enable_if<
 };
 
 
-} // namespace concept
+} // namespace concepts
 
 template<typename T, typename E>
 struct Result {
@@ -900,8 +900,8 @@ private:
 
 template<typename T, typename E>
 bool operator==(const Result<T, E>& lhs, const Result<T, E>& rhs) {
-	static_assert(concept::EqualityComparable<T>::value, "T must be EqualityComparable for Result to be comparable");
-	static_assert(concept::EqualityComparable<E>::value, "E must be EqualityComparable for Result to be comparable");
+	static_assert(concepts::EqualityComparable<T>::value, "T must be EqualityComparable for Result to be comparable");
+	static_assert(concepts::EqualityComparable<E>::value, "E must be EqualityComparable for Result to be comparable");
 
 	if (lhs.isOk() && rhs.isOk()) {
 		return lhs.storage().template get<T>() == rhs.storage().template get<T>();
@@ -913,7 +913,7 @@ bool operator==(const Result<T, E>& lhs, const Result<T, E>& rhs) {
 
 template<typename T, typename E>
 bool operator==(const Result<T, E>& lhs, types::Ok<T> ok) {
-	static_assert(concept::EqualityComparable<T>::value, "T must be EqualityComparable for Result to be comparable");
+	static_assert(concepts::EqualityComparable<T>::value, "T must be EqualityComparable for Result to be comparable");
 
 	if (!lhs.isOk()) return false;
 
@@ -927,7 +927,7 @@ bool operator==(const Result<void, E>& lhs, types::Ok<void>) {
 
 template<typename T, typename E>
 bool operator==(const Result<T, E>& lhs, types::Err<E> err) {
-	static_assert(concept::EqualityComparable<E>::value, "E must be EqualityComparable for Result to be comparable");
+	static_assert(concepts::EqualityComparable<E>::value, "E must be EqualityComparable for Result to be comparable");
 	if (!lhs.isErr()) return false;
 
 	return lhs.storage().template get<E>() == err.val;

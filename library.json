@@ -1,6 +1,6 @@
 {
     "name": "Result",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A Rust-like implementation for optional error handling",
     "keywords": "result, error, template, c++, optional",
     "repository":
